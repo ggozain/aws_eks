@@ -61,6 +61,6 @@ module "eks" {
   }
 
   tags = {
-    Environment = "staging"
+    Environment = var.environment
   }
 }

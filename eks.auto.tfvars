@@ -1,5 +1,6 @@
 // AWS Region
 aws_region = "eu-west-2"
+environment = "test"
 
 // TF cloud details where the VPC module was applied from
 tfcloud_organization = "gozain-lab"

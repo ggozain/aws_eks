@@ -88,3 +88,8 @@ variable "force_update_version" {
   type        = bool
   description = "worker node EC2 force update option"
 }
+
+variable "environment" {
+  type        = string
+  description = "Environment that EKS is being deployed on to for tagging purposes"
+}
