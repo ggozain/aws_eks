@@ -80,8 +80,6 @@ module "eks" {
     }
   }
 
-  tags = {
-    Environment = var.environment
-  }
+  tags = var.eks_tags
 }
 
