@@ -43,7 +43,7 @@ worker_node_instance_type_general = ["t3.small"]
 //SPOT
 worker_node_instance_type_spot = ["t3.micro"]
 
-// EKS Tags
+// Tags
 eks_tags = {
-  Environment = var.environment
+  Environment = "test"
 }
