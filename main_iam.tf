@@ -77,6 +77,9 @@ module "eks_admins_iam_group" {
   custom_group_policy_arns          = [module.allow_assume_eks_admins_iam_policy.arn]
 }
 
+
+/// Autoscaler IAM role
+
 module "cluster_autoscaler_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.3.1"
