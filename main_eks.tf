@@ -1,7 +1,8 @@
 data "tfe_outputs" "vpc" {
   organization = var.tfcloud_organization
-  workspace    = var.tfcloud_workspace
+  workspace    = var.tfcloud_workspace_vpc
 }
+
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -59,8 +60,28 @@ module "eks" {
       force_update_version = var.force_update_version
     }
   }
+  manage_aws_auth_configmap = true
+  aws_auth_roles = [
+    {
+      rolearn  = module.eks_admins_iam_role.iam_role_arn
+      username = module.eks_admins_iam_role.iam_role_name
+      groups   = ["system:masters"]
+    },
+  ]
+
+  node_security_group_additional_rules = {
+    ingress_allow_access_from_control_plane = {
+      type                          = "ingress"
+      protocol                      = "tcp"
+      from_port                     = 9443
+      to_port                       = 9443
+      source_cluster_security_group = true
+      description                   = "Allow access from control plane to webhook port of AWS load balancer controller"
+    }
+  }
 
   tags = {
     Environment = var.environment
   }
 }
+

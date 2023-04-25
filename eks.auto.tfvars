@@ -1,10 +1,11 @@
 // AWS Region
-aws_region = "eu-west-2"
+aws_region  = "eu-west-2"
 environment = "test"
 
 // TF cloud details where the VPC module was applied from
-tfcloud_organization = "gozain-lab"
-tfcloud_workspace    = "aws_vpc"
+tfcloud_organization  = "gozain-lab"
+tfcloud_workspace_vpc = "aws_vpc"
+
 
 //EKS configuration
 eks_kubernetes_version      = "1.23"
@@ -41,3 +42,8 @@ capacity_type = "ON_DEMAND"
 worker_node_instance_type_general = ["t3.small"]
 //SPOT
 worker_node_instance_type_spot = ["t3.micro"]
+
+// EKS Tags
+eks_tags = {
+  Environment = var.environment
+}

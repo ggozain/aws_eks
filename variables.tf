@@ -6,7 +6,7 @@ variable "tfcloud_organization" {
   type = string
 }
 
-variable "tfcloud_workspace" {
+variable "tfcloud_workspace_vpc" {
   type = string
 }
 
@@ -92,4 +92,9 @@ variable "force_update_version" {
 variable "environment" {
   type        = string
   description = "Environment that EKS is being deployed on to for tagging purposes"
+}
+
+variable "eks_tags" {
+  type        = map(any)
+  description = "EKS node tags"
 }
