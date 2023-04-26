@@ -1,3 +1,5 @@
+// EKS Cluster admins IAM roles.
+
 module "allow_eks_access_iam_policy" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
   version = "5.3.1"
@@ -30,7 +32,8 @@ module "eks_admins_iam_role" {
   custom_role_policy_arns = [module.allow_eks_access_iam_policy.arn]
 
   trusted_role_arns = [
-    "arn:aws:iam::${data.tfe_outputs.vpc.values.vpc_owner_id}:root"
+    "arn:aws:iam::${data.tfe_outputs.vpc.values.vpc_owner_id}:root",
+    "arn:aws:iam::212339200011:oidc-provider/app.terraform.io"
   ]
 }
 

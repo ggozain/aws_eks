@@ -10,6 +10,12 @@ variable "tfcloud_workspace_vpc" {
   type = string
 }
 
+variable "tfc_hostname" {
+  type        = string
+  default     = "app.terraform.io"
+  description = "The hostname of the TFC or TFE instance you'd like to use with AWS"
+}
+
 variable "eks_kubernetes_version" {
   type        = string
   description = "the desired kubernetes version to be used when creating EKS cluster"
