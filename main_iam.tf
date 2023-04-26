@@ -54,9 +54,8 @@ module "iam_assumable_role_admin" {
     "arn:aws:iam::212339200011:policy/tfc-policy",
   ]
 
-  oidc_fully_qualified_subjects  = ["app.terraform.io:aud:aws.workload.identity"]
   oidc_fully_qualified_audiences = ["aws.workload.identity", "sts.amazonaws.com"]
-  oidc_subjects_with_wildcards   = ["app.terraform.io:suborganization:gozain-lab:*"]
+  oidc_subjects_with_wildcards   = ["organization:gozain-lab:*"]
 
 }
 
