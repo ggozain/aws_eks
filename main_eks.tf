@@ -3,6 +3,11 @@ data "tfe_outputs" "vpc" {
   workspace    = var.tfcloud_workspace_vpc
 }
 
+data "tfe_outputs" "oidc" {
+  organization = var.tfcloud_organization
+  workspace    = var.tfcloud_workspace_oidc
+}
+
 data "tls_certificate" "tfc_certificate" {
   url = "https://${var.tfc_hostname}"
 }
@@ -65,8 +70,9 @@ module "eks" {
   // Enable OIDC IdP for Cluster
   cluster_identity_providers = {
     TF_Cloud = {
-      client_id  = "aws.workload.identity"
-      issuer_url = data.tls_certificate.tfc_certificate.url
+      client_id       = "aws.workload.identity"
+      issuer_url      = data.tls_certificate.tfc_certificate.url
+      required_claims = data.tfe_outputs.oidc.values.openid_claims
 
     }
   }
@@ -84,6 +90,15 @@ module "eks" {
       rolearn  = module.eks_admins_iam_role.iam_role_arn
       username = "system:node:{{EC2PrivateDNSName}}"
       groups = [
+        "system:bootstrappers",
+        "system:nodes",
+      ]
+    },
+    {
+      rolearn  = data.tfe_outputs.oidc.values.role_arn
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups = [
+        "system:masters",
         "system:bootstrappers",
         "system:nodes",
       ]

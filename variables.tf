@@ -10,6 +10,10 @@ variable "tfcloud_workspace_vpc" {
   type = string
 }
 
+variable "tfcloud_workspace_oidc" {
+  type = string
+}
+
 variable "tfc_hostname" {
   type        = string
   default     = "app.terraform.io"

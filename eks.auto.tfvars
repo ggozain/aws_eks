@@ -3,8 +3,9 @@ aws_region  = "eu-west-2"
 environment = "test"
 
 // TF cloud details where the VPC module was applied from
-tfcloud_organization  = "gozain-lab"
-tfcloud_workspace_vpc = "aws_vpc"
+tfcloud_organization   = "gozain-lab"
+tfcloud_workspace_vpc  = "aws_vpc"
+tfcloud_workspace_oidc = "aws_oidc_provider"
 
 
 //EKS configuration
