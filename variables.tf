@@ -98,3 +98,10 @@ variable "eks_tags" {
   type        = map(any)
   description = "EKS node tags"
 }
+
+variable "create_aws_auth_configmap" {
+  type        = bool
+  description = "Create Kube aws config map aws_auth"
+  default     = false
+
+}

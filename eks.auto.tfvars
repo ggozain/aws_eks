@@ -13,6 +13,7 @@ eks_cluster_iam_role_name   = "Cluster-A" //MUST match the k8s labels created fo
 nodes_general_iam_role_name = "nodes_general"
 eks_cluster_name            = "Cluster-A"
 node_group_name             = "node-group-1"
+create_aws_auth_configmap   = true
 
 //  // scaling variables
 # Desired number of worker nodes.

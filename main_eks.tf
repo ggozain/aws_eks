@@ -19,6 +19,8 @@ module "eks" {
 
   enable_irsa = true
 
+  create_aws_auth_configmap = var.create_aws_auth_configmap
+
   eks_managed_node_group_defaults = {
     disk_size = var.worker_node_disk_size
   }
