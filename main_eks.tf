@@ -70,10 +70,8 @@ module "eks" {
   // Enable OIDC IdP for Cluster
   cluster_identity_providers = {
     TF_Cloud = {
-      client_id       = "aws.workload.identity"
-      issuer_url      = data.tls_certificate.tfc_certificate.url
-      required_claims = data.tfe_outputs.oidc.values.openid_claims
-
+      client_id  = "aws.workload.identity"
+      issuer_url = data.tls_certificate.tfc_certificate.url
     }
   }
 
@@ -88,6 +86,14 @@ module "eks" {
 
     {
       rolearn  = module.eks_admins_iam_role.iam_role_arn
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups = [
+        "system:bootstrappers",
+        "system:nodes",
+      ]
+    },
+    {
+      rolearn  = module.iam_assumable_role_admin.iam_role_arn
       username = "system:node:{{EC2PrivateDNSName}}"
       groups = [
         "system:bootstrappers",

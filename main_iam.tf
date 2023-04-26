@@ -36,6 +36,32 @@ module "eks_admins_iam_role" {
   ]
 }
 
+module "iam_assumable_role_admin" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+
+  create_role = true
+
+  role_name = "role-with-oidc"
+
+  tags = {
+    Role = "role-with-oidc"
+  }
+
+  provider_url = var.tfc_hostname
+
+  role_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::212339200011:policy/tfc-policy",
+  ]
+
+  oidc_fully_qualified_subjects  = ["app.terraform.io:aud:aws.workload.identity"]
+  oidc_fully_qualified_audiences = ["aws.workload.identity", "sts.amazonaws.com"]
+  oidc_subjects_with_wildcards   = ["app.terraform.io:suborganization:gozain-lab:*"]
+
+}
+
+
+
 module "user1_iam_user" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-user"
   version = "5.3.1"
