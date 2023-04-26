@@ -79,11 +79,7 @@ module "eks" {
   create_aws_auth_configmap = var.create_aws_auth_configmap
 
   aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::212339200011:role/tfc-role"
-      username = module.eks_admins_iam_role.iam_role_name
-      groups   = ["system:masters"]
-    },
+
     {
       rolearn  = module.eks_admins_iam_role.iam_role_arn
       username = "system:node:{{EC2PrivateDNSName}}"
