@@ -11,8 +11,8 @@ module "eks" {
   cluster_name    = var.eks_cluster_name
   cluster_version = var.eks_kubernetes_version
 
-  cluster_endpoint_private_access = true
-  cluster_endpoint_public_access  = true
+  cluster_endpoint_private_access = var.cluster_endpoint_private_access
+  cluster_endpoint_public_access  = var.cluster_endpoint_public_access
 
   vpc_id     = data.tfe_outputs.vpc.values.vpc_id
   subnet_ids = data.tfe_outputs.vpc.values.private_subnet_id

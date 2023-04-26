@@ -15,6 +15,18 @@ variable "eks_kubernetes_version" {
   description = "the desired kubernetes version to be used when creating EKS cluster"
 }
 
+variable "cluster_endpoint_private_access" {
+  type        = bool
+  description = "Enable Cluster private access"
+  default     = false
+}
+
+variable "cluster_endpoint_public_access" {
+  type        = bool
+  description = "Enable Cluster private access"
+  default     = false
+}
+
 variable "eks_cluster_iam_role_name" {
   type        = string
   description = "the desired name for the eks_iam_role"
