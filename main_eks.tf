@@ -64,7 +64,7 @@ module "eks" {
 
   // Enable OIDC IdP for Cluster
   cluster_identity_providers = {
-    sts = {
+    TF_Cloud = {
       client_id  = "aws.workload.identity"
       issuer_url = data.tls_certificate.tfc_certificate.url
 
