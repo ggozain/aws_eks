@@ -100,7 +100,7 @@ module "eks_admins_iam_group" {
   name                              = "eks-admin"
   attach_iam_self_management_policy = false
   create_group                      = true
-  group_users                       = [module.user1_iam_user.iam_user_name]
+  group_users                       = [module.user1_iam_user.iam_user_name, "ggozain"]
   custom_group_policy_arns          = [module.allow_assume_eks_admins_iam_policy.arn]
 }
 
