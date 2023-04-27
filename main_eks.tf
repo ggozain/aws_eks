@@ -174,13 +174,13 @@ module "eks" {
     }
   }
 
-  # aws_auth_users = [
-  #   {
-  #     userarn  = 
-  #     username = module.user1_iam_user.iam_user_name
-  #     groups   = ["system:masters"]
-  #   }
-  # ]
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::212339200011"
+      username = "ggozain"
+      groups   = ["system:masters"]
+    }
+  ]
 
   node_security_group_additional_rules = {
     ingress_allow_access_from_control_plane = {
