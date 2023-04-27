@@ -36,7 +36,7 @@ module "eks_admins_iam_role" {
   ]
 }
 
-module "iam_assumable_role_admin" {
+module "iam-assumable-role-with-oidc" {
   source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
 
   create_role = true
@@ -50,8 +50,7 @@ module "iam_assumable_role_admin" {
   provider_url = var.tfc_hostname
 
   role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::212339200011:policy/tfc-policy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",    
   ]
 
   oidc_fully_qualified_audiences = ["aws.workload.identity", "sts.amazonaws.com"]
