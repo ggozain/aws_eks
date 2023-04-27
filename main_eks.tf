@@ -161,6 +161,14 @@ module "eks" {
     }
   ]
 
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::212339200011:user/ggozain"
+      username = "ggozain"
+      groups   = ["system:masters"]
+    }
+  ]
+
   fargate_profiles = {
     karpenter = {
       selectors = [
@@ -174,13 +182,7 @@ module "eks" {
     }
   }
 
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::212339200011"
-      username = "ggozain"
-      groups   = ["system:masters"]
-    }
-  ]
+  
 
   node_security_group_additional_rules = {
     ingress_allow_access_from_control_plane = {
