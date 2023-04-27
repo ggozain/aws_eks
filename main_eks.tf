@@ -161,13 +161,13 @@ module "eks" {
     }
   ]
 
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::212339200011:user/ggozain"
-      username = "ggozain"
-      groups   = ["system:masters"]
-    }
-  ]
+  # aws_auth_users = [
+  #   {
+  #     userarn  = "arn:aws:iam::212339200011:user/ggozain"
+  #     username = "ggozain"
+  #     groups   = ["system:masters"]
+  #   }
+  # ]
 
   fargate_profiles = {
     karpenter = {
@@ -198,16 +198,7 @@ module "eks" {
   tags = var.eks_tags
 }
 
-# resource "null_resource" "kubectl" {
-#   depends_on = [
-#     module.eks
-#   ]
-#   provisioner "local-exec" {
-#     command = "aws eks --region ${var.aws_region} update-kubeconfig --name ${var.eks_cluster_name}"
-#   }
-# }
-
-################################ KARPENTER #############
+################################ KARPENTER #######################################
 
 module "karpenter" {
   source = "terraform-aws-modules/eks/aws//modules/karpenter"
