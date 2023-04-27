@@ -106,13 +106,13 @@ module "eks" {
     }
   }
 
-  # // Enable OIDC IdP for Cluster
-  # cluster_identity_providers = {
-  #   TF_Cloud = {
-  #     client_id  = "aws.workload.identity"
-  #     issuer_url = data.tls_certificate.tfc_certificate.url
-  #   }
-  # }
+  // Enable OIDC IdP for Cluster
+  cluster_identity_providers = {
+    TF_Cloud = {
+      client_id  = "aws.workload.identity"
+      issuer_url = data.tls_certificate.tfc_certificate.url
+    }
+  }
 
   // Enable IRSA
   enable_irsa = true
@@ -161,14 +161,6 @@ module "eks" {
     }
   ]
 
-  # aws_auth_users = [
-  #   {
-  #     userarn  = "arn:aws:iam::212339200011:user/ggozain"
-  #     username = "ggozain"
-  #     groups   = ["system:masters"]
-  #   }
-  # ]
-
   fargate_profiles = {
     karpenter = {
       selectors = [
@@ -181,8 +173,6 @@ module "eks" {
       ]
     }
   }
-
-  
 
   node_security_group_additional_rules = {
     ingress_allow_access_from_control_plane = {
@@ -323,4 +313,34 @@ resource "kubectl_manifest" "karpenter_example_deployment" {
   depends_on = [
     helm_release.karpenter
   ]
+}
+
+
+resource "helm_release" "aws_load_balancer_controller" {
+  name = "aws-load-balancer-controller"
+
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  version    = "1.4.4"
+
+  set {
+    name  = "replicaCount"
+    value = 1
+  }
+
+  set {
+    name  = "clusterName"
+    value = module.eks.cluster_id
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "aws-load-balancer-controller"
+  }
+
+  set {
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
+  }
 }
