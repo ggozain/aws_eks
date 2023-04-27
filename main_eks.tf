@@ -143,7 +143,7 @@ module "eks" {
       ]
     },
     {
-      rolearn  = module.iam_assumable_role_admin.iam_role_arn
+      rolearn  = module.iam-assumable-role-with-oidc.iam_role_arn
       username = "system:node:{{EC2PrivateDNSName}}"
       groups = [
         "system:bootstrappers",
