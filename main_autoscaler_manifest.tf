@@ -1,5 +1,5 @@
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_name
+locals {
+  cluster_id = module.eks.cluster_id
 }
 
 resource "kubectl_manifest" "service_account" {
@@ -181,7 +181,7 @@ spec:
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
             - --expander=least-waste
-            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${data.aws_eks_cluster.cluster.cluster_id}
+            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${local.cluster_id}
           volumeMounts:
             - name: ssl-certs
               mountPath: /etc/ssl/certs/ca-certificates.crt
