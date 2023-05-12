@@ -43,9 +43,9 @@ capacity_type = "ON_DEMAND"
 
 # List of instance types associated with the EKS Node Group
 //GENERAL
-worker_node_instance_type_general = ["t3.small"]
+worker_node_instance_type_general = ["t2.micro"]
 //SPOT
-worker_node_instance_type_spot = ["t3.micro"]
+worker_node_instance_type_spot = ["t2.micro"]
 
 // Tags
 eks_tags = {
