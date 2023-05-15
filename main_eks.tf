@@ -37,31 +37,31 @@ module "eks" {
   cluster_addons = {
     kube-proxy = {}
     vpc-cni    = {}
-    coredns = {
-      configuration_values = jsonencode({
-        computeType = "Fargate"
-        # Ensure that we fully utilize the minimum amount of resources that are supplied by
-        # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
-        # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
-        # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
-        # compute configuration that most closely matches the sum of vCPU and memory requests in
-        # order to ensure pods always have the resources that they need to run.
-        resources = {
-          limits = {
-            cpu = "0.25"
-            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-            # request/limit to ensure we can fit within that task
-            memory = "256M"
-          }
-          requests = {
-            cpu = "0.25"
-            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-            # request/limit to ensure we can fit within that task
-            memory = "256M"
-          }
-        }
-      })
-    }
+    # coredns = {
+    #   configuration_values = jsonencode({
+    #     computeType = "Fargate"
+    #     # Ensure that we fully utilize the minimum amount of resources that are supplied by
+    #     # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
+    #     # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
+    #     # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
+    #     # compute configuration that most closely matches the sum of vCPU and memory requests in
+    #     # order to ensure pods always have the resources that they need to run.
+    #     resources = {
+    #       limits = {
+    #         cpu = "0.25"
+    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+    #         # request/limit to ensure we can fit within that task
+    #         memory = "256M"
+    #       }
+    #       requests = {
+    #         cpu = "0.25"
+    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+    #         # request/limit to ensure we can fit within that task
+    #         memory = "256M"
+    #       }
+    #     }
+    #   })
+    # }
   }
 
   eks_managed_node_group_defaults = {
@@ -84,26 +84,26 @@ module "eks" {
       force_update_version = var.force_update_version
     }
 
-    # spot = {
-    #   desired_size = var.worker_nodes_desired_size
-    #   min_size     = var.worker_nodes_min_size
-    #   max_size     = var.worker_nodes_max_size
+    spot = {
+      desired_size = var.worker_nodes_desired_size
+      min_size     = var.worker_nodes_min_size
+      max_size     = var.worker_nodes_max_size
 
-    #   labels = {
-    #     role = "spot"
-    #   }
+      labels = {
+        role = "spot"
+      }
 
-    #   taints = [{
-    #     key    = "market"
-    #     value  = "spot"
-    #     effect = "NO_SCHEDULE"
-    #   }]
+      taints = [{
+        key    = "market"
+        value  = "spot"
+        effect = "NO_SCHEDULE"
+      }]
 
-    #   instance_types       = var.worker_node_instance_type_spot
-    #   ami_type             = var.ami_type
-    #   capacity_type        = "SPOT"
-    #   force_update_version = var.force_update_version
-    # }
+      instance_types       = var.worker_node_instance_type_spot
+      ami_type             = var.ami_type
+      capacity_type        = "SPOT"
+      force_update_version = var.force_update_version
+    }
   }
 
   // Enable OIDC IdP for Cluster
@@ -118,7 +118,7 @@ module "eks" {
   enable_irsa = true
 
   # aws-auth configmap
-  manage_aws_auth_configmap     = true
+  manage_aws_auth_configmap     = var.create_aws_auth_configmap
   create_cluster_security_group = false
   create_node_security_group    = false
   create_aws_auth_configmap     = var.create_aws_auth_configmap
@@ -161,29 +161,29 @@ module "eks" {
     }
   ]
 
-  fargate_profiles = {
-    karpenter = {
-      selectors = [
-        { namespace = "karpenter" }
-      ]
-    }
-    kube-system = {
-      selectors = [
-        { namespace = "kube-system" }
-      ]
-    }
-  }
+  # fargate_profiles = {
+  #   karpenter = {
+  #     selectors = [
+  #       { namespace = "karpenter" }
+  #     ]
+  #   }
+  #   kube-system = {
+  #     selectors = [
+  #       { namespace = "kube-system" }
+  #     ]
+  #   }
+  # }
 
-  node_security_group_additional_rules = {
-    ingress_allow_access_from_control_plane = {
-      type                          = "ingress"
-      protocol                      = "tcp"
-      from_port                     = 9443
-      to_port                       = 9443
-      source_cluster_security_group = true
-      description                   = "Allow access from control plane to webhook port of AWS load balancer controller"
-    }
-  }
+  # node_security_group_additional_rules = {
+  #   ingress_allow_access_from_control_plane = {
+  #     type                          = "ingress"
+  #     protocol                      = "tcp"
+  #     from_port                     = 9443
+  #     to_port                       = 9443
+  #     source_cluster_security_group = true
+  #     description                   = "Allow access from control plane to webhook port of AWS load balancer controller"
+  #   }
+  # }
 
   tags = var.eks_tags
 }

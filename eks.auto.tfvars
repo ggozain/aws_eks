@@ -9,12 +9,12 @@ tfcloud_workspace_oidc = "aws_oidc_provider"
 
 
 //EKS configuration
-eks_kubernetes_version          = "1.23"
+eks_kubernetes_version          = "1.26"
 eks_cluster_iam_role_name       = "Cluster-A" //MUST match the k8s labels created for the subnets in vpc/module (i.e. "kubernetes.io/cluster/eks" where <eks> is the cluster name)
 nodes_general_iam_role_name     = "nodes_general"
 eks_cluster_name                = "Cluster-A"
 node_group_name                 = "node-group-1"
-create_aws_auth_configmap       = false
+create_aws_auth_configmap       = true
 cluster_endpoint_private_access = true
 cluster_endpoint_public_access  = true
 
@@ -43,9 +43,9 @@ capacity_type = "ON_DEMAND"
 
 # List of instance types associated with the EKS Node Group
 //GENERAL
-worker_node_instance_type_general = ["t2.micro"]
+worker_node_instance_type_general = ["t3.micro"]
 //SPOT
-worker_node_instance_type_spot = ["t2.micro"]
+worker_node_instance_type_spot = ["t3.micro"]
 
 // Tags
 eks_tags = {
