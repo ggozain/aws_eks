@@ -84,35 +84,35 @@ module "eks" {
       force_update_version = var.force_update_version
     }
 
-    spot = {
-      desired_size = var.worker_nodes_desired_size
-      min_size     = var.worker_nodes_min_size
-      max_size     = var.worker_nodes_max_size
+    # spot = {
+    #   desired_size = var.worker_nodes_desired_size
+    #   min_size     = var.worker_nodes_min_size
+    #   max_size     = var.worker_nodes_max_size
 
-      labels = {
-        role = "spot"
-      }
+    #   labels = {
+    #     role = "spot"
+    #   }
 
-      taints = [{
-        key    = "market"
-        value  = "spot"
-        effect = "NO_SCHEDULE"
-      }]
+    #   taints = [{
+    #     key    = "market"
+    #     value  = "spot"
+    #     effect = "NO_SCHEDULE"
+    #   }]
 
-      instance_types       = var.worker_node_instance_type_spot
-      ami_type             = var.ami_type
-      capacity_type        = "SPOT"
-      force_update_version = var.force_update_version
-    }
+    #   instance_types       = var.worker_node_instance_type_spot
+    #   ami_type             = var.ami_type
+    #   capacity_type        = "SPOT"
+    #   force_update_version = var.force_update_version
+    # }
   }
 
   // Enable OIDC IdP for Cluster
-  cluster_identity_providers = {
-    TF_Cloud = {
-      client_id  = "aws.workload.identity"
-      issuer_url = data.tls_certificate.tfc_certificate.url
-    }
-  }
+  # cluster_identity_providers = {
+  #   TF_Cloud = {
+  #     client_id  = "aws.workload.identity"
+  #     issuer_url = data.tls_certificate.tfc_certificate.url
+  #   }
+  # }
 
   // Enable IRSA
   enable_irsa = true
