@@ -32,11 +32,14 @@ module "eks" {
 
   vpc_id                   = data.tfe_outputs.vpc.values.vpc_id
   subnet_ids               = data.tfe_outputs.vpc.values.private_subnet_id
-  control_plane_subnet_ids = data.tfe_outputs.vpc.values.intra_subnet_id
+  # control_plane_subnet_ids = data.tfe_outputs.vpc.values.intra_subnet_id
 
-  cluster_addons = {
-    kube-proxy = {}
-    vpc-cni    = {}
+    // Enable IRSA
+  enable_irsa = true
+
+  # cluster_addons = {
+  #   kube-proxy = {}
+  #   vpc-cni    = {}
     # coredns = {
     #   configuration_values = jsonencode({
     #     computeType = "Fargate"
@@ -62,7 +65,7 @@ module "eks" {
     #     }
     #   })
     # }
-  }
+  # }
 
   eks_managed_node_group_defaults = {
     disk_size = var.worker_node_disk_size
@@ -114,8 +117,7 @@ module "eks" {
     }
   }
 
-  // Enable IRSA
-  enable_irsa = true
+
 
   # aws-auth configmap
   manage_aws_auth_configmap     = var.create_aws_auth_configmap
@@ -133,6 +135,11 @@ module "eks" {
     #     "system:nodes",
     #   ]
     # },
+    {
+      rolearn  = module.eks_admins_iam_role.iam_role_arn
+      username = module.eks_admins_iam_role.iam_role_name
+      groups   = ["system:masters"]
+    },
 
     {
       rolearn  = module.eks_admins_iam_role.iam_role_arn
