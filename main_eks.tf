@@ -336,7 +336,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "clusterName"
-    value = data.aws_eks_cluster.default.cluster_id
+    value = data.aws_eks_cluster.default.id
   }
 
   set {
