@@ -114,12 +114,12 @@ module "eks" {
   }
 
   // Enable OIDC IdP for Cluster
-  cluster_identity_providers = {
-    TF_Cloud = {
-      client_id  = "aws.workload.identity"
-      issuer_url = data.tls_certificate.tfc_certificate.url
-    }
-  }
+  # cluster_identity_providers = {
+  #   TF_Cloud = {
+  #     client_id  = "aws.workload.identity"
+  #     issuer_url = data.tls_certificate.tfc_certificate.url
+  #   }
+  # }
 
 
 
@@ -286,7 +286,6 @@ resource "kubectl_manifest" "karpenter_node_template" {
   ]
 }
 
-# Example deployment using the [pause image](https://www.ianlewis.org/en/almighty-pause-container)
 # and starts with zero replicas
 resource "kubectl_manifest" "karpenter_example_deployment" {
   yaml_body = <<-YAML
