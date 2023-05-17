@@ -146,24 +146,8 @@ module "eks" {
     },
 
     {
-      rolearn  = module.eks_admins_iam_role.iam_role_arn
-      username = "system:node:{{EC2PrivateDNSName}}"
-      groups = [
-        "system:bootstrappers",
-        "system:nodes",
-      ]
-    },
-    {
-      rolearn  = module.iam-assumable-role-with-oidc.iam_role_arn
-      username = "system:node:{{EC2PrivateDNSName}}"
-      groups = [
-        "system:bootstrappers",
-        "system:nodes",
-      ]
-    },
-    {
       rolearn  = data.tfe_outputs.oidc.values.role_arn
-      username = "system:node:{{EC2PrivateDNSName}}"
+      username = "tfc-role"
       groups = [
         "system:masters",
         "system:bootstrappers",
