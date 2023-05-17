@@ -12,8 +12,12 @@ data "tls_certificate" "tfc_certificate" {
   url = "https://${var.tfc_hostname}"
 }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_name
+data "aws_eks_cluster" "default" {
+  name = module.eks.cluster_id
+}
+
+data "aws_eks_cluster_auth" "default" {
+  name = module.eks.cluster_id
 }
 
 data "aws_ecrpublic_authorization_token" "token" {
@@ -30,41 +34,41 @@ module "eks" {
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
 
-  vpc_id                   = data.tfe_outputs.vpc.values.vpc_id
-  subnet_ids               = data.tfe_outputs.vpc.values.private_subnet_id
+  vpc_id     = data.tfe_outputs.vpc.values.vpc_id
+  subnet_ids = data.tfe_outputs.vpc.values.private_subnet_id
   # control_plane_subnet_ids = data.tfe_outputs.vpc.values.intra_subnet_id
 
-    // Enable IRSA
+  // Enable IRSA
   enable_irsa = true
 
   # cluster_addons = {
   #   kube-proxy = {}
   #   vpc-cni    = {}
-    # coredns = {
-    #   configuration_values = jsonencode({
-    #     computeType = "Fargate"
-    #     # Ensure that we fully utilize the minimum amount of resources that are supplied by
-    #     # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
-    #     # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
-    #     # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
-    #     # compute configuration that most closely matches the sum of vCPU and memory requests in
-    #     # order to ensure pods always have the resources that they need to run.
-    #     resources = {
-    #       limits = {
-    #         cpu = "0.25"
-    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-    #         # request/limit to ensure we can fit within that task
-    #         memory = "256M"
-    #       }
-    #       requests = {
-    #         cpu = "0.25"
-    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-    #         # request/limit to ensure we can fit within that task
-    #         memory = "256M"
-    #       }
-    #     }
-    #   })
-    # }
+  # coredns = {
+  #   configuration_values = jsonencode({
+  #     computeType = "Fargate"
+  #     # Ensure that we fully utilize the minimum amount of resources that are supplied by
+  #     # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
+  #     # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
+  #     # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
+  #     # compute configuration that most closely matches the sum of vCPU and memory requests in
+  #     # order to ensure pods always have the resources that they need to run.
+  #     resources = {
+  #       limits = {
+  #         cpu = "0.25"
+  #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+  #         # request/limit to ensure we can fit within that task
+  #         memory = "256M"
+  #       }
+  #       requests = {
+  #         cpu = "0.25"
+  #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+  #         # request/limit to ensure we can fit within that task
+  #         memory = "256M"
+  #       }
+  #     }
+  #   })
+  # }
   # }
 
   eks_managed_node_group_defaults = {
