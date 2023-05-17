@@ -41,35 +41,35 @@ module "eks" {
   // Enable IRSA
   enable_irsa = true
 
-  # cluster_addons = {
-  #   kube-proxy = {}
-  #   vpc-cni    = {}
-  # coredns = {
-  #   configuration_values = jsonencode({
-  #     computeType = "Fargate"
-  #     # Ensure that we fully utilize the minimum amount of resources that are supplied by
-  #     # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
-  #     # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
-  #     # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
-  #     # compute configuration that most closely matches the sum of vCPU and memory requests in
-  #     # order to ensure pods always have the resources that they need to run.
-  #     resources = {
-  #       limits = {
-  #         cpu = "0.25"
-  #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-  #         # request/limit to ensure we can fit within that task
-  #         memory = "256M"
-  #       }
-  #       requests = {
-  #         cpu = "0.25"
-  #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-  #         # request/limit to ensure we can fit within that task
-  #         memory = "256M"
-  #       }
-  #     }
-  #   })
-  # }
-  # }
+  cluster_addons = {
+    kube-proxy = {}
+    vpc-cni    = {}
+    coredns = {
+      configuration_values = jsonencode({
+        computeType = "Fargate"
+        # Ensure that we fully utilize the minimum amount of resources that are supplied by
+        # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
+        # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
+        # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
+        # compute configuration that most closely matches the sum of vCPU and memory requests in
+        # order to ensure pods always have the resources that they need to run.
+        resources = {
+          limits = {
+            cpu = "0.25"
+            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+            # request/limit to ensure we can fit within that task
+            memory = "256M"
+          }
+          requests = {
+            cpu = "0.25"
+            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+            # request/limit to ensure we can fit within that task
+            memory = "256M"
+          }
+        }
+      })
+    }
+  }
 
   eks_managed_node_group_defaults = {
     disk_size = var.worker_node_disk_size
@@ -131,14 +131,14 @@ module "eks" {
 
   aws_auth_roles = [
 
-    # {
-    #   rolearn  = module.karpenter.role_arn
-    #   username = "system:node:{{EC2PrivateDNSName}}"
-    #   groups = [
-    #     "system:bootstrappers",
-    #     "system:nodes",
-    #   ]
-    # },
+    {
+      rolearn  = module.karpenter.role_arn
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups = [
+        "system:bootstrappers",
+        "system:nodes",
+      ]
+    },
     {
       rolearn  = module.eks_admins_iam_role.iam_role_arn
       username = module.eks_admins_iam_role.iam_role_name
