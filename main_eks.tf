@@ -44,31 +44,31 @@ module "eks" {
   cluster_addons = {
     kube-proxy = {}
     vpc-cni    = {}
-    coredns = {
-      configuration_values = jsonencode({
-        computeType = "Fargate"
-        # Ensure that we fully utilize the minimum amount of resources that are supplied by
-        # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
-        # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
-        # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
-        # compute configuration that most closely matches the sum of vCPU and memory requests in
-        # order to ensure pods always have the resources that they need to run.
-        resources = {
-          limits = {
-            cpu = "0.25"
-            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-            # request/limit to ensure we can fit within that task
-            memory = "256M"
-          }
-          requests = {
-            cpu = "0.25"
-            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-            # request/limit to ensure we can fit within that task
-            memory = "256M"
-          }
-        }
-      })
-    }
+    # coredns = {
+    #   configuration_values = jsonencode({
+    #     computeType = "Fargate"
+    #     # Ensure that we fully utilize the minimum amount of resources that are supplied by
+    #     # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
+    #     # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
+    #     # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
+    #     # compute configuration that most closely matches the sum of vCPU and memory requests in
+    #     # order to ensure pods always have the resources that they need to run.
+    #     resources = {
+    #       limits = {
+    #         cpu = "0.25"
+    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+    #         # request/limit to ensure we can fit within that task
+    #         memory = "256M"
+    #       }
+    #       requests = {
+    #         cpu = "0.25"
+    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+    #         # request/limit to ensure we can fit within that task
+    #         memory = "256M"
+    #       }
+    #     }
+    #   })
+    # }
   }
 
 
@@ -143,14 +143,14 @@ module "eks" {
 
   aws_auth_roles = [
 
-    {
-      rolearn  = module.karpenter.role_arn
-      username = "system:node:{{EC2PrivateDNSName}}"
-      groups = [
-        "system:bootstrappers",
-        "system:nodes",
-      ]
-    },
+    # {
+    #   rolearn  = module.karpenter.role_arn
+    #   username = "system:node:{{EC2PrivateDNSName}}"
+    #   groups = [
+    #     "system:bootstrappers",
+    #     "system:nodes",
+    #   ]
+    # },
     {
       rolearn  = module.eks_admins_iam_role.iam_role_arn
       username = module.eks_admins_iam_role.iam_role_name
@@ -194,158 +194,158 @@ module "eks" {
 
 ################################ KARPENTER #######################################
 
-module "karpenter" {
-  source = "terraform-aws-modules/eks/aws//modules/karpenter"
+# module "karpenter" {
+#   source = "terraform-aws-modules/eks/aws//modules/karpenter"
 
-  cluster_name           = module.eks.cluster_name
-  irsa_oidc_provider_arn = module.eks.oidc_provider_arn
+#   cluster_name           = module.eks.cluster_name
+#   irsa_oidc_provider_arn = module.eks.oidc_provider_arn
 
-  policies = {
-    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  }
+#   policies = {
+#     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+#   }
 
-}
+# }
 
-resource "helm_release" "karpenter" {
-  namespace        = "karpenter"
-  create_namespace = true
+# resource "helm_release" "karpenter" {
+#   namespace        = "karpenter"
+#   create_namespace = true
 
-  name                = "karpenter"
-  repository          = "oci://public.ecr.aws/karpenter"
-  repository_username = data.aws_ecrpublic_authorization_token.token.user_name
-  repository_password = data.aws_ecrpublic_authorization_token.token.password
-  chart               = "karpenter"
-  version             = "v0.21.1"
+#   name                = "karpenter"
+#   repository          = "oci://public.ecr.aws/karpenter"
+#   repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+#   repository_password = data.aws_ecrpublic_authorization_token.token.password
+#   chart               = "karpenter"
+#   version             = "v0.21.1"
 
-  set {
-    name  = "settings.aws.clusterName"
-    value = module.eks.cluster_name
-  }
+#   set {
+#     name  = "settings.aws.clusterName"
+#     value = module.eks.cluster_name
+#   }
 
-  set {
-    name  = "settings.aws.clusterEndpoint"
-    value = module.eks.cluster_endpoint
-  }
+#   set {
+#     name  = "settings.aws.clusterEndpoint"
+#     value = module.eks.cluster_endpoint
+#   }
 
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.karpenter.irsa_arn
-  }
+#   set {
+#     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+#     value = module.karpenter.irsa_arn
+#   }
 
-  set {
-    name  = "settings.aws.defaultInstanceProfile"
-    value = module.karpenter.instance_profile_name
-  }
+#   set {
+#     name  = "settings.aws.defaultInstanceProfile"
+#     value = module.karpenter.instance_profile_name
+#   }
 
-  set {
-    name  = "settings.aws.interruptionQueueName"
-    value = module.karpenter.queue_name
-  }
-}
+#   set {
+#     name  = "settings.aws.interruptionQueueName"
+#     value = module.karpenter.queue_name
+#   }
+# }
 
-resource "kubectl_manifest" "karpenter_provisioner" {
-  yaml_body = <<-YAML
-    apiVersion: karpenter.sh/v1alpha5
-    kind: Provisioner
-    metadata:
-      name: default
-    spec:
-      requirements:
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["spot"]
-      limits:
-        resources:
-          cpu: 1000
-      providerRef:
-        name: default
-      ttlSecondsAfterEmpty: 30
-  YAML
+# resource "kubectl_manifest" "karpenter_provisioner" {
+#   yaml_body = <<-YAML
+#     apiVersion: karpenter.sh/v1alpha5
+#     kind: Provisioner
+#     metadata:
+#       name: default
+#     spec:
+#       requirements:
+#         - key: karpenter.sh/capacity-type
+#           operator: In
+#           values: ["spot"]
+#       limits:
+#         resources:
+#           cpu: 1000
+#       providerRef:
+#         name: default
+#       ttlSecondsAfterEmpty: 30
+#   YAML
 
-  depends_on = [
-    helm_release.karpenter
-  ]
-}
+#   depends_on = [
+#     helm_release.karpenter
+#   ]
+# }
 
-resource "kubectl_manifest" "karpenter_node_template" {
-  yaml_body = <<-YAML
-    apiVersion: karpenter.k8s.aws/v1alpha1
-    kind: AWSNodeTemplate
-    metadata:
-      name: default
-    spec:
-      subnetSelector:
-        karpenter.sh/discovery: ${module.eks.cluster_name}
-      securityGroupSelector:
-        karpenter.sh/discovery: ${module.eks.cluster_name}
-      tags:
-        karpenter.sh/discovery: ${module.eks.cluster_name}
-  YAML
+# resource "kubectl_manifest" "karpenter_node_template" {
+#   yaml_body = <<-YAML
+#     apiVersion: karpenter.k8s.aws/v1alpha1
+#     kind: AWSNodeTemplate
+#     metadata:
+#       name: default
+#     spec:
+#       subnetSelector:
+#         karpenter.sh/discovery: ${module.eks.cluster_name}
+#       securityGroupSelector:
+#         karpenter.sh/discovery: ${module.eks.cluster_name}
+#       tags:
+#         karpenter.sh/discovery: ${module.eks.cluster_name}
+#   YAML
 
-  depends_on = [
-    helm_release.karpenter
-  ]
-}
+#   depends_on = [
+#     helm_release.karpenter
+#   ]
+# }
 
-# and starts with zero replicas
-resource "kubectl_manifest" "karpenter_example_deployment" {
-  yaml_body = <<-YAML
-    apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: nginx-deployment
-  spec:
-    replicas: 4
-    selector:
-      matchLabels:
-        app: nginx
-    template:
-      metadata:
-        labels:
-          app: nginx
-      spec:
-        containers:
-        - name: nginx
-          image: nginx:1.14.2
-          resources:
-            requests:
-              cpu: "1"
-  YAML
+# # and starts with zero replicas
+# resource "kubectl_manifest" "karpenter_example_deployment" {
+#   yaml_body = <<-YAML
+#     apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: nginx-deployment
+#   spec:
+#     replicas: 4
+#     selector:
+#       matchLabels:
+#         app: nginx
+#     template:
+#       metadata:
+#         labels:
+#           app: nginx
+#       spec:
+#         containers:
+#         - name: nginx
+#           image: nginx:1.14.2
+#           resources:
+#             requests:
+#               cpu: "1"
+#   YAML
 
-  depends_on = [
-    helm_release.karpenter
-  ]
-}
+#   depends_on = [
+#     helm_release.karpenter
+#   ]
+# }
 
 
 
 ############# LOAD BALANCER #######################
 
-# resource "helm_release" "aws_load_balancer_controller" {
-#   name = "aws-load-balancer-controller"
+resource "helm_release" "aws_load_balancer_controller" {
+  name = "aws-load-balancer-controller"
 
-#   repository = "https://aws.github.io/eks-charts"
-#   chart      = "aws-load-balancer-controller"
-#   namespace  = "kube-system"
-#   version    = "1.4.4"
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  version    = "1.4.4"
 
-#   set {
-#     name  = "replicaCount"
-#     value = 1
-#   }
+  set {
+    name  = "replicaCount"
+    value = 1
+  }
 
-#   set {
-#     name  = "clusterName"
-#     value = data.aws_eks_cluster.default.id
-#   }
+  set {
+    name  = "clusterName"
+    value = data.aws_eks_cluster.default.id
+  }
 
-#   set {
-#     name  = "serviceAccount.name"
-#     value = "aws-load-balancer-controller"
-#   }
+  set {
+    name  = "serviceAccount.name"
+    value = "aws-load-balancer-controller"
+  }
 
-#   set {
-#     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-#     value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
-#   }
-# }
+  set {
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
+  }
+}
