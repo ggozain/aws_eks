@@ -13,11 +13,11 @@ data "tls_certificate" "tfc_certificate" {
 }
 
 data "aws_eks_cluster" "default" {
-  name = "Cluster-A"
+  name = module.eks.cluster_id
 }
 
 data "aws_eks_cluster_auth" "default" {
-  name = "Cluster-A"
+  name = module.eks.cluster_id
 }
 
 data "aws_ecrpublic_authorization_token" "token" {
