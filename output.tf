@@ -23,6 +23,11 @@ output "cluster_id" {
 #   value       = module.eks.config_map_aws_auth
 # }
 
+output "oidc_arn" {
+  description = "OIDC Irsa ARN"
+  value       = module.eks.oidc_provider_arn
+}
+
 output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = var.eks_cluster_name
