@@ -156,6 +156,14 @@ module "eks" {
     }
   ]
 
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::212339200011:user/user1"
+      username = "user1"
+      groups   = ["system:masters"]
+    },
+  ]
+
   # fargate_profiles = {
   #   karpenter = {
   #     selectors = [
