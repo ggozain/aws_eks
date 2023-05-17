@@ -120,7 +120,7 @@ module "eks" {
 
 
   # aws-auth configmap
-  manage_aws_auth_configmap     = var.create_aws_auth_configmap
+  manage_aws_auth_configmap     = var.manage_aws_auth_configmap
   create_cluster_security_group = false
   create_node_security_group    = false
   create_aws_auth_configmap     = var.create_aws_auth_configmap

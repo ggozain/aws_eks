@@ -14,7 +14,8 @@ eks_cluster_iam_role_name       = "Cluster-A" //MUST match the k8s labels create
 nodes_general_iam_role_name     = "nodes_general"
 eks_cluster_name                = "Cluster-A"
 node_group_name                 = "node-group-1"
-create_aws_auth_configmap       = true
+create_aws_auth_configmap       = false
+manage_aws_auth_configmap       = true
 cluster_endpoint_private_access = true
 cluster_endpoint_public_access  = true
 

@@ -127,3 +127,10 @@ variable "create_aws_auth_configmap" {
   default     = false
 
 }
+
+variable "manage_aws_auth_configmap" {
+  type        = bool
+  description = "Manage Kube aws config map aws_auth"
+  default     = false
+
+}
