@@ -30,7 +30,7 @@ output "oidc_arn" {
 
 output "cluster_name" {
   description = "Kubernetes Cluster Name"
-  value       = var.eks_cluster_name
+  value       = data.aws_eks_cluster.default.id
 }
 
 output "configure_kubeconfig" {
