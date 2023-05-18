@@ -102,39 +102,39 @@ module "eks_admins_iam_group" {
 }
 
 
-/// Autoscaler IAM role
+# /// Autoscaler IAM role
 
-module "cluster_autoscaler_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.3.1"
+# module "cluster_autoscaler_irsa_role" {
+#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+#   version = "5.3.1"
 
-  role_name                        = "cluster-autoscaler"
-  attach_cluster_autoscaler_policy = true
-  cluster_autoscaler_cluster_ids   = [data.aws_eks_cluster.default.id]
+#   role_name                        = "cluster-autoscaler"
+#   attach_cluster_autoscaler_policy = true
+#   cluster_autoscaler_cluster_ids   = [data.aws_eks_cluster.default.id]
 
-  oidc_providers = {
-    ex = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:cluster-autoscaler"]
-    }
-  }
-}
+#   oidc_providers = {
+#     ex = {
+#       provider_arn               = module.eks.oidc_provider_arn
+#       namespace_service_accounts = ["kube-system:cluster-autoscaler"]
+#     }
+#   }
+# }
 
 
-/// Load Balancer Controler Role
+# /// Load Balancer Controler Role
 
-module "aws_load_balancer_controller_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.3.1"
+# module "aws_load_balancer_controller_irsa_role" {
+#   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+#   version = "5.3.1"
 
-  role_name = "aws-load-balancer-controller"
+#   role_name = "aws-load-balancer-controller"
 
-  attach_load_balancer_controller_policy = true
+#   attach_load_balancer_controller_policy = true
 
-  oidc_providers = {
-    ex = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
-    }
-  }
-}
+#   oidc_providers = {
+#     ex = {
+#       provider_arn               = module.eks.oidc_provider_arn
+#       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
+#     }
+#   }
+# }

@@ -36,7 +36,7 @@ module "eks" {
 
   vpc_id     = data.tfe_outputs.vpc.values.vpc_id
   subnet_ids = data.tfe_outputs.vpc.values.private_subnet_id
-  # control_plane_subnet_ids = data.tfe_outputs.vpc.values.intra_subnet_id
+  control_plane_subnet_ids = data.tfe_outputs.vpc.values.intra_subnet_id
 
   // Enable IRSA
   enable_irsa = true
@@ -44,31 +44,31 @@ module "eks" {
   cluster_addons = {
     kube-proxy = {}
     vpc-cni    = {}
-    # coredns = {
-    #   configuration_values = jsonencode({
-    #     computeType = "Fargate"
-    #     # Ensure that we fully utilize the minimum amount of resources that are supplied by
-    #     # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
-    #     # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
-    #     # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
-    #     # compute configuration that most closely matches the sum of vCPU and memory requests in
-    #     # order to ensure pods always have the resources that they need to run.
-    #     resources = {
-    #       limits = {
-    #         cpu = "0.25"
-    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-    #         # request/limit to ensure we can fit within that task
-    #         memory = "256M"
-    #       }
-    #       requests = {
-    #         cpu = "0.25"
-    #         # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-    #         # request/limit to ensure we can fit within that task
-    #         memory = "256M"
-    #       }
-    #     }
-    #   })
-    # }
+    coredns = {
+      configuration_values = jsonencode({
+        computeType = "Fargate"
+        # Ensure that we fully utilize the minimum amount of resources that are supplied by
+        # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
+        # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
+        # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
+        # compute configuration that most closely matches the sum of vCPU and memory requests in
+        # order to ensure pods always have the resources that they need to run.
+        resources = {
+          limits = {
+            cpu = "0.25"
+            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+            # request/limit to ensure we can fit within that task
+            memory = "256M"
+          }
+          requests = {
+            cpu = "0.25"
+            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+            # request/limit to ensure we can fit within that task
+            memory = "256M"
+          }
+        }
+      })
+    }
   }
 
 
@@ -126,12 +126,12 @@ module "eks" {
   }
 
   // Enable OIDC IdP for Cluster
-  # cluster_identity_providers = {
-  #   TF_Cloud = {
-  #     client_id  = "aws.workload.identity"
-  #     issuer_url = data.tls_certificate.tfc_certificate.url
-  #   }
-  # }
+  cluster_identity_providers = {
+    TF_Cloud = {
+      client_id  = "aws.workload.identity"
+      issuer_url = data.tls_certificate.tfc_certificate.url
+    }
+  }
 
 
 
@@ -321,31 +321,31 @@ module "eks" {
 
 ############# LOAD BALANCER #######################
 
-resource "helm_release" "aws_load_balancer_controller" {
-  name = "aws-load-balancer-controller"
+# resource "helm_release" "aws_load_balancer_controller" {
+#   name = "aws-load-balancer-controller"
 
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "aws-load-balancer-controller"
-  namespace  = "kube-system"
-  version    = "1.4.4"
+#   repository = "https://aws.github.io/eks-charts"
+#   chart      = "aws-load-balancer-controller"
+#   namespace  = "kube-system"
+#   version    = "1.4.4"
 
-  set {
-    name  = "replicaCount"
-    value = 1
-  }
+#   set {
+#     name  = "replicaCount"
+#     value = 1
+#   }
 
-  set {
-    name  = "clusterName"
-    value = data.aws_eks_cluster.default.id
-  }
+#   set {
+#     name  = "clusterName"
+#     value = data.aws_eks_cluster.default.id
+#   }
 
-  set {
-    name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
-  }
+#   set {
+#     name  = "serviceAccount.name"
+#     value = "aws-load-balancer-controller"
+#   }
 
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
-  }
-}
+#   set {
+#     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+#     value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
+#   }
+# }
