@@ -36,7 +36,7 @@ module "eks" {
 
   vpc_id                   = data.tfe_outputs.vpc.values.vpc_id
   subnet_ids               = data.tfe_outputs.vpc.values.private_subnet_id
-  control_plane_subnet_ids = data.tfe_outputs.vpc.values.intra_subnet_id
+  # control_plane_subnet_ids = data.tfe_outputs.vpc.values.intra_subnet_id
 
   // Enable IRSA
   enable_irsa = true
