@@ -326,8 +326,13 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
-  namespace  = "kube-system"
+  namespace  = "ingress-aws"
   version    = "1.4.4"
+  create_namespace = true
+
+  values = [
+    "${file("./k8s/load-balancer-values.yaml")}"
+  ]
 
   set {
     name  = "replicaCount"
