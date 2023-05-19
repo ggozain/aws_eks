@@ -28,12 +28,12 @@ output "oidc_arn" {
   value       = module.eks.oidc_provider_arn
 }
 
-output "cluster_name" {
-  description = "Kubernetes Cluster Name"
-  value       = data.aws_eks_cluster.default.id
-}
-
 output "configure_kubeconfig" {
   description = "Command to configure kubeconfig"
   value       = "aws eks --region $(terraform output region) update-kubeconfig --name $(terraform output cluster_name)"
+}
+
+output "eks_certificate" {
+  description = "Cluster Certificate"
+  value       = module.eks.cluster_tls_certificate_sha1_fingerprint
 }
