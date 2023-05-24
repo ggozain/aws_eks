@@ -1,4 +1,4 @@
-clusterName: Cluster-A
+clusterName: eks-demo
 
 # the name of the IngressClass
 ingressClass: aws-alb
