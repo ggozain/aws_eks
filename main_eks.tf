@@ -177,11 +177,11 @@ module "eks" {
   # ]
 
   fargate_profiles = {
-    # karpenter = {
-    #   selectors = [
-    #     { namespace = "karpenter" }
-    #   ]
-    # }
+    karpenter = {
+      selectors = [
+        { namespace = "karpenter" }
+      ]
+    }
     kube-system = {
       selectors = [
         { namespace = "kube-system" }
