@@ -345,6 +345,11 @@ resource "helm_release" "aws_load_balancer_controller" {
   }
 
   set {
+    name  = "region"
+    value = var.aws_region
+  }
+
+  set {
     name  = "serviceAccount.name"
     value = "aws-load-balancer-controller"
   }
