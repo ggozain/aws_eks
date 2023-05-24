@@ -13,11 +13,11 @@ data "tls_certificate" "tfc_certificate" {
 }
 
 data "aws_eks_cluster" "default" {
-  name = module.eks.cluster_name
+  name = module.eks.cluster_id
 }
 
 data "aws_eks_cluster_auth" "default" {
-  name = module.eks.cluster_name
+  name = module.eks.cluster_id
 }
 
 data "aws_ecrpublic_authorization_token" "token" {
@@ -177,11 +177,11 @@ module "eks" {
   # ]
 
   fargate_profiles = {
-    karpenter = {
-      selectors = [
-        { namespace = "karpenter" }
-      ]
-    }
+    # karpenter = {
+    #   selectors = [
+    #     { namespace = "karpenter" }
+    #   ]
+    # }
     kube-system = {
       selectors = [
         { namespace = "kube-system" }
