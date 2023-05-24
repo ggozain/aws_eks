@@ -6,7 +6,7 @@ ingressClass: aws-alb
 # works only if you have a working prometheus operator installed:
 # https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
 serviceMonitor:
-  enabled: true
+  enabled: false
 
 # make sure to use OIDC for the following, or follow the instructions from here instead:
 # https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/deploy/installation/#option-a-iam-roles-for-service-accounts-irsa
