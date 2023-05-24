@@ -327,7 +327,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   namespace  = "ingress-aws"
-  version    = "2.3.0"
+  version    = "2.5.2"
   create_namespace = true
 
   values = [
