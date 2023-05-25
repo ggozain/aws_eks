@@ -11,7 +11,7 @@ serviceMonitor:
 # make sure to use OIDC for the following, or follow the instructions from here instead:
 # https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/deploy/installation/#option-a-iam-roles-for-service-accounts-irsa
 serviceAccount:
-  create: false
+  create: true
   name: aws-load-balancer-controller
 
 ingressClassParams:
