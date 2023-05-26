@@ -194,62 +194,62 @@ module "eks" {
 
 ############# LOAD BALANCER CONTROLLER #######################
 
-resource "helm_release" "aws_load_balancer_controller" {
-  name = "aws-load-balancer-controller"
+# resource "helm_release" "aws_load_balancer_controller" {
+#   name = "aws-load-balancer-controller"
 
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "aws-load-balancer-controller"
-  namespace  = "kube-system"
-  create_namespace = false
+#   repository = "https://aws.github.io/eks-charts"
+#   chart      = "aws-load-balancer-controller"
+#   namespace  = "kube-system"
+#   create_namespace = false
 
-  values = [
-    "${file("./k8s/load-balancer-values.yaml")}"
-  ]
+#   values = [
+#     "${file("./k8s/load-balancer-values.yaml")}"
+#   ]
 
-  set {
-    name  = "region"
-    value = var.aws_region
-  }
-  set {
-    name  = "image.tag"
-    value = "2.4.7"
-  }
-  set {
-    name  = "image.repository"
-    value = "602401143452.dkr.ecr.eu-west-2.amazonaws.com/amazon/aws-load-balancer-controller"
+#   set {
+#     name  = "region"
+#     value = var.aws_region
+#   }
+#   set {
+#     name  = "image.tag"
+#     value = "2.4.7"
+#   }
+#   set {
+#     name  = "image.repository"
+#     value = "602401143452.dkr.ecr.eu-west-2.amazonaws.com/amazon/aws-load-balancer-controller"
     
-  }
+#   }
 
-  set {
-    name  = "replicaCount"
-    value = 1
-  }
+#   set {
+#     name  = "replicaCount"
+#     value = 1
+#   }
 
-  set {
-    name  = "clusterName"
-    value = data.aws_eks_cluster.default.id
-  }
+#   set {
+#     name  = "clusterName"
+#     value = data.aws_eks_cluster.default.id
+#   }
 
-  set {
-    name  = "region"
-    value = var.aws_region
-  }
+#   set {
+#     name  = "region"
+#     value = var.aws_region
+#   }
 
-  set {
-    name  = "serviceAccount.create"
-    value = "true"
-  }
+#   set {
+#     name  = "serviceAccount.create"
+#     value = "true"
+#   }
 
-  set {
-    name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
-  }
+#   set {
+#     name  = "serviceAccount.name"
+#     value = "aws-load-balancer-controller"
+#   }
 
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
-  }
-}
+#   set {
+#     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+#     value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
+#   }
+# }
 
 
 ################################ KARPENTER #######################################
