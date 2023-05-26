@@ -41,35 +41,35 @@ module "eks" {
   // Enable IRSA
   enable_irsa = true
 
-  cluster_addons = {
-    kube-proxy = {}
-    vpc-cni    = {}
-    coredns = {
-      configuration_values = jsonencode({
-        computeType = "Fargate"
-        # Ensure that we fully utilize the minimum amount of resources that are supplied by
-        # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
-        # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
-        # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
-        # compute configuration that most closely matches the sum of vCPU and memory requests in
-        # order to ensure pods always have the resources that they need to run.
-        resources = {
-          limits = {
-            cpu = "0.25"
-            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-            # request/limit to ensure we can fit within that task
-            memory = "256M"
-          }
-          requests = {
-            cpu = "0.25"
-            # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
-            # request/limit to ensure we can fit within that task
-            memory = "256M"
-          }
-        }
-      })
-    }
-  }
+  # cluster_addons = {
+  #   kube-proxy = {}
+  #   vpc-cni    = {}
+  #   coredns = {
+  #     configuration_values = jsonencode({
+  #       computeType = "Fargate"
+  #       # Ensure that we fully utilize the minimum amount of resources that are supplied by
+  #       # Fargate https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html
+  #       # Fargate adds 256 MB to each pod's memory reservation for the required Kubernetes
+  #       # components (kubelet, kube-proxy, and containerd). Fargate rounds up to the following
+  #       # compute configuration that most closely matches the sum of vCPU and memory requests in
+  #       # order to ensure pods always have the resources that they need to run.
+  #       resources = {
+  #         limits = {
+  #           cpu = "0.25"
+  #           # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+  #           # request/limit to ensure we can fit within that task
+  #           memory = "256M"
+  #         }
+  #         requests = {
+  #           cpu = "0.25"
+  #           # We are targetting the smallest Task size of 512Mb, so we subtract 256Mb from the
+  #           # request/limit to ensure we can fit within that task
+  #           memory = "256M"
+  #         }
+  #       }
+  #     })
+  #   }
+  # }
 
 
   node_security_group_additional_rules = {
@@ -176,21 +176,81 @@ module "eks" {
   #   },
   # ]
 
-  fargate_profiles = {
-    karpenter = {
-      selectors = [
-        { namespace = "karpenter" }
-      ]
-    }
-    kube-system = {
-      selectors = [
-        { namespace = "kube-system" }
-      ]
-    }
-  }
+  # fargate_profiles = {
+  #   karpenter = {
+  #     selectors = [
+  #       { namespace = "karpenter" }
+  #     ]
+  #   }
+  #   kube-system = {
+  #     selectors = [
+  #       { namespace = "kube-system" }
+  #     ]
+  #   }
+  # }
 
   tags = var.eks_tags
 }
+
+############# LOAD BALANCER CONTROLLER #######################
+
+resource "helm_release" "aws_load_balancer_controller" {
+  name = "aws-load-balancer-controller"
+
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  create_namespace = false
+
+  values = [
+    "${file("./k8s/load-balancer-values.yaml")}"
+  ]
+
+  set {
+    name  = "region"
+    value = var.aws_region
+  }
+  set {
+    name  = "image.tag"
+    value = "2.4.7"
+  }
+  set {
+    name  = "image.repository"
+    value = "602401143452.dkr.ecr.eu-west-2.amazonaws.com/amazon/aws-load-balancer-controller"
+    
+  }
+
+  set {
+    name  = "replicaCount"
+    value = 1
+  }
+
+  set {
+    name  = "clusterName"
+    value = data.aws_eks_cluster.default.id
+  }
+
+  set {
+    name  = "region"
+    value = var.aws_region
+  }
+
+  set {
+    name  = "serviceAccount.create"
+    value = "true"
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "aws-load-balancer-controller"
+  }
+
+  set {
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
+  }
+}
+
 
 ################################ KARPENTER #######################################
 
@@ -319,62 +379,3 @@ module "eks" {
 
 
 
-############# LOAD BALANCER #######################
-
-resource "helm_release" "aws_load_balancer_controller" {
-  name = "aws-load-balancer-controller"
-
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "aws-load-balancer-controller"
-  namespace  = "ingress-aws"
-  # version    = "2.4.7"
-  create_namespace = true
-
-  values = [
-    "${file("./k8s/load-balancer-values.yaml")}"
-  ]
-
-  set {
-    name  = "region"
-    value = var.aws_region
-  }
-  set {
-    name  = "image.tag"
-    value = "2.4.7"
-  }
-  set {
-    name  = "image.repository"
-    value = "602401143452.dkr.ecr.eu-west-2.amazonaws.com/amazon/aws-load-balancer-controller"
-    
-  }
-
-  set {
-    name  = "replicaCount"
-    value = 1
-  }
-
-  set {
-    name  = "clusterName"
-    value = data.aws_eks_cluster.default.id
-  }
-
-  set {
-    name  = "region"
-    value = var.aws_region
-  }
-
-  set {
-    name  = "serviceAccount.create"
-    value = "true"
-  }
-
-  set {
-    name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
-  }
-}
