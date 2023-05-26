@@ -23,7 +23,7 @@ cluster_endpoint_public_access  = true
 # Desired number of worker nodes.
 worker_nodes_desired_size = 1
 # Maximum number of worker nodes.
-worker_nodes_max_size = 1
+worker_nodes_max_size = 10
 # Minimum number of worker nodes.
 worker_nodes_min_size = 1
 # Worked nodes disk size in GiB
